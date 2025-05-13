@@ -1,0 +1,42 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - APP_ENV=testing
+      - APP_DEBUG=true
+      - DB_HOST=mysql
+      - REDIS_HOST=redis
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - ipsc-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ipsc_test
+      MYSQL_USER: ipsc_user
+      MYSQL_PASSWORD: test_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - mysql-test-data:/var/lib/mysql
+    networks:
+      - ipsc-network
+
+  redis:
+    image: redis:7.0
+    volumes:
+      - redis-test-data:/data
+    networks:
+      - ipsc-network
+
+networks:
+  ipsc-network:
+    driver: bridge
+
+volumes:
+  mysql-test-data:
+  redis-test-data:
